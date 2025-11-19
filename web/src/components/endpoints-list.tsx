@@ -1,4 +1,3 @@
-import { Loader2 } from 'lucide-react'
 import { endpointListSchema } from '../http/schemas/endpoints'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
