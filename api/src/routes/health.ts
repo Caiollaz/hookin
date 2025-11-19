@@ -2,7 +2,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 
 export const health: FastifyPluginAsyncZod = async (app) => {
   app.get(
-    '/health',
+    '/api/health',
     {
       schema: {
         summary: 'Health check endpoint',
