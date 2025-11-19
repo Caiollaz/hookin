@@ -6,6 +6,9 @@ RUN corepack enable && corepack prepare pnpm@10.15.0 --activate
 
 WORKDIR /app
 
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Copiar arquivos de dependências (otimiza cache de layers)
 COPY web/package.json pnpm-lock.yaml* ./
 

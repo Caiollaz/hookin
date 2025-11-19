@@ -41,16 +41,16 @@ COPY --from=builder /app/dist ./dist
 # Copiar migrations (necessárias em runtime)
 COPY api/src/db/migrations ./src/db/migrations
 
+# Copiar script de healthcheck
+COPY api/healthcheck.sh /usr/local/bin/healthcheck.sh
+RUN chmod +x /usr/local/bin/healthcheck.sh
+
 # Variáveis de ambiente padrão
 ENV NODE_ENV=production
-ENV PORT=3333
 
-# Healthcheck para monitoramento
+# Healthcheck para monitoramento (usa PORT do env via script)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3333/health || exit 1
-
-# Expor porta
-EXPOSE 3333
+  CMD /usr/local/bin/healthcheck.sh
 
 # Comando para iniciar a aplicação
 CMD ["node", "dist/server.js"]
