@@ -1,0 +1,63 @@
+import { db } from '@/db'
+import { endpoints } from '@/db/schema'
+import { eq } from 'drizzle-orm'
+
+const adjectives = [
+  'salty', 'brave', 'swift', 'clever', 'bold', 'calm', 'bright', 'dark',
+  'fierce', 'gentle', 'quick', 'slow', 'sharp', 'smooth', 'wild', 'tame',
+  'ancient', 'modern', 'silent', 'loud', 'tiny', 'huge', 'warm', 'cold',
+  'fresh', 'stale', 'sweet', 'sour', 'soft', 'hard', 'light', 'heavy',
+  'smooth', 'rough', 'calm', 'stormy', 'bright', 'dim', 'clear', 'foggy',
+  'warm', 'cool', 'dry', 'wet', 'smooth', 'bumpy', 'quiet', 'noisy',
+  'fast', 'slow', 'big', 'small', 'thick', 'thin', 'wide', 'narrow',
+  'high', 'low', 'deep', 'shallow', 'strong', 'weak', 'firm', 'loose',
+  'tight', 'loose', 'full', 'empty', 'rich', 'poor', 'new', 'old',
+  'young', 'mature', 'fresh', 'old', 'clean', 'dirty', 'pure', 'mixed',
+  'simple', 'complex', 'easy', 'hard', 'safe', 'risky', 'calm', 'chaotic',
+]
+
+const nouns = [
+  'owl', 'fox', 'wolf', 'eagle', 'hawk', 'bear', 'lion', 'tiger',
+  'deer', 'rabbit', 'squirrel', 'beaver', 'otter', 'seal', 'whale', 'dolphin',
+  'shark', 'fish', 'bird', 'crow', 'raven', 'sparrow', 'robin', 'cardinal',
+  'hawk', 'falcon', 'eagle', 'owl', 'woodpecker', 'hummingbird', 'swan', 'duck',
+  'goose', 'chicken', 'rooster', 'turkey', 'peacock', 'penguin', 'flamingo', 'pelican',
+  'cat', 'dog', 'horse', 'cow', 'pig', 'sheep', 'goat', 'donkey',
+  'camel', 'elephant', 'giraffe', 'zebra', 'rhino', 'hippo', 'buffalo', 'bison',
+  'moose', 'elk', 'deer', 'antelope', 'gazelle', 'impala', 'wildebeest', 'gnu',
+  'kangaroo', 'koala', 'panda', 'polar', 'grizzly', 'black', 'brown', 'grizzly',
+  'penguin', 'seal', 'walrus', 'otter', 'beaver', 'muskrat', 'rat', 'mouse',
+  'hamster', 'gerbil', 'guinea', 'chinchilla', 'ferret', 'mink', 'weasel', 'stoat',
+]
+
+/**
+ * Generates a unique slug in the format: adjective-noun-number
+ * Examples: salty-owl-91, brave-fox-42
+ */
+export async function generateUniqueSlug(): Promise<string> {
+  let attempts = 0
+  const maxAttempts = 100
+
+  while (attempts < maxAttempts) {
+    const adjective = adjectives[Math.floor(Math.random() * adjectives.length)]
+    const noun = nouns[Math.floor(Math.random() * nouns.length)]
+    const number = Math.floor(Math.random() * 100)
+    const slug = `${adjective}-${noun}-${number}`
+
+    const existing = await db
+      .select()
+      .from(endpoints)
+      .where(eq(endpoints.slug, slug))
+      .limit(1)
+
+    if (existing.length === 0) {
+      return slug
+    }
+
+    attempts++
+  }
+
+  const uuid = crypto.randomUUID().slice(0, 8)
+  return `endpoint-${uuid}`
+}
+
