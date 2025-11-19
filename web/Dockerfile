@@ -1,28 +1,30 @@
-# Stage 1: Build
+# ---------- BUILDER ----------
 FROM node:20-alpine AS builder
-
-RUN corepack enable && corepack prepare pnpm@10.15.0 --activate
 
 WORKDIR /app
 
-# Root workspace
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+# Copiar arquivos essenciais do projeto
+COPY web/package.json web/package-lock.json ./
 
-# Web package.json
-COPY web/package.json ./web/
+# Instalar dependências
+RUN npm install
 
-RUN pnpm install --frozen-lockfile
+# Copiar todo o restante do código do front-end
+COPY web/ ./
 
-COPY web ./web
+# Build de produção
+RUN npm run build
 
-RUN pnpm --filter web run build
 
-
-# Stage 2: Production
+# ---------- PRODUCTION (NGINX) ----------
 FROM nginx:alpine AS production
 
-COPY --from=builder /app/web/dist /usr/share/nginx/html
+# Copiar build final
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copiar configuração customizada
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
+
 CMD ["nginx", "-g", "daemon off;"]

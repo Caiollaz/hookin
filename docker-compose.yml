@@ -1,36 +1,35 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # API Backend
   api:
+    container_name: hookin_api
     build:
       context: .
       dockerfile: ./api/Dockerfile
-    container_name: hookin_api
     environment:
       NODE_ENV: production
       PORT: ${PORT}
       DATABASE_URL: ${DATABASE_URL}
       BASE_URL: ${BASE_URL}
     ports:
-      - '${PORT}:${PORT}'
+      - "${PORT}:${PORT}"
     networks:
       - hookin_network
     restart: unless-stopped
 
   # Web Frontend
   web:
+    container_name: hookin_web
     build:
       context: .
       dockerfile: ./web/Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL}
-    container_name: hookin_web
     ports:
-      - '${WEB_PORT:-80}:80'
+      - "${WEB_PORT:-80}:80"
     depends_on:
-      api:
-        condition: service_healthy
+      - api
     networks:
       - hookin_network
     restart: unless-stopped
@@ -38,5 +37,3 @@ services:
 networks:
   hookin_network:
     driver: bridge
-
-
