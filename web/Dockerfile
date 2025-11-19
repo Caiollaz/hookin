@@ -10,7 +10,8 @@ ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
 # Copiar arquivos de dependências (otimiza cache de layers)
-COPY web/package.json pnpm-lock.yaml* ./
+COPY web/package.json ./
+COPY web/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # Instalar dependências (apenas se package.json ou lockfile mudarem)
 RUN pnpm install --frozen-lockfile
