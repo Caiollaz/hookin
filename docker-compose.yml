@@ -9,11 +9,11 @@ services:
     container_name: hookin_api
     environment:
       NODE_ENV: production
-      PORT: ${API_PORT}
+      PORT: ${PORT}
       DATABASE_URL: ${DATABASE_URL}
       BASE_URL: ${BASE_URL}
     ports:
-      - '${API_PORT}:${API_PORT}'
+      - '${PORT}:${PORT}'
     networks:
       - hookin_network
     restart: unless-stopped
