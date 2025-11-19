@@ -29,6 +29,18 @@ export const listWebhooks: FastifyPluginAsyncZod = async (app) => {
             ),
             nextCursor: z.string().nullable(),
           }),
+          404: z.object({
+            message: z.string(),
+            webhooks: z.array(
+              createSelectSchema(webhooks).pick({
+                id: true,
+                method: true,
+                pathname: true,
+                createdAt: true,
+              })
+            ).default([]),
+            nextCursor: z.string().nullable().default(null),
+          }),
         },
       },
     },

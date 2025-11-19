@@ -26,4 +26,3 @@ export const health: FastifyPluginAsyncZod = async (app) => {
     },
   )
 }
-
