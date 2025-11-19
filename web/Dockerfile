@@ -1,34 +1,28 @@
-# --------------------------
-# STAGE 1 — BUILD
-# --------------------------
+# Stage 1: Build
 FROM node:20-alpine AS builder
 
 RUN corepack enable && corepack prepare pnpm@10.15.0 --activate
 
 WORKDIR /app
 
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
+# Root workspace
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 
-# Copiar lockfile e package.json corretos
-COPY pnpm-lock.yaml ./pnpm-lock.yaml
-COPY web/package.json ./package.json
+# Web package.json
+COPY web/package.json ./web/
 
 RUN pnpm install --frozen-lockfile
 
-# Copiar código fonte
-COPY web/ ./
+COPY web ./web
 
-RUN pnpm run build
+RUN pnpm --filter web run build
 
-# --------------------------
-# STAGE 2 — PRODUCTION
-# --------------------------
-FROM nginx:alpine
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Stage 2: Production
+FROM nginx:alpine AS production
+
+COPY --from=builder /app/web/dist /usr/share/nginx/html
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]

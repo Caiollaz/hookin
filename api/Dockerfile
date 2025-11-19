@@ -1,41 +1,38 @@
-# --------------------------
-# STAGE 1 — BUILD
-# --------------------------
+# Stage 1: Build
 FROM node:20-alpine AS builder
 
 RUN corepack enable && corepack prepare pnpm@10.15.0 --activate
 
 WORKDIR /app
 
-# Copia configs + lockfiles
-COPY api/package.json api/pnpm-lock.yaml* ./
+# Copiar root config (workspace + lockfile)
+COPY pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json ./
 
-# Instala tudo (dev + prod)
+# Copiar API package.json
+COPY api/package.json ./api/
+
 RUN pnpm install --frozen-lockfile
 
-# Copia o restante do código
-COPY api ./
+# Copiar código
+COPY api ./api
 
-# Build TS
-RUN pnpm run build
+RUN pnpm --filter api run build
 
-# --------------------------
-# STAGE 2 — PRODUCTION
-# --------------------------
+
+# Stage 2: Production
 FROM node:20-alpine AS production
 
 RUN corepack enable && corepack prepare pnpm@10.15.0 --activate
 
 WORKDIR /app
 
-# Copia apenas dependências de runtime
-COPY api/package.json api/pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile --prod
+# Copiar root config
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY api/package.json ./api/
 
-# Copia os artefatos do build
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/src/db/migrations ./src/db/migrations
+RUN pnpm install --frozen-lockfile --prod --filter api
 
-ENV NODE_ENV=production
+COPY --from=builder /app/api/dist ./dist
 
 CMD ["node", "dist/server.js"]
