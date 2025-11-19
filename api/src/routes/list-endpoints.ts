@@ -21,7 +21,7 @@ export const listEndpoints: FastifyPluginAsyncZod = async (app) => {
                 url: z.string(),
                 webhookCount: z.number(),
                 createdAt: z.coerce.date(),
-              })
+              }),
             ),
           }),
         },
@@ -34,7 +34,9 @@ export const listEndpoints: FastifyPluginAsyncZod = async (app) => {
             id: endpoints.id,
             slug: endpoints.slug,
             createdAt: endpoints.createdAt,
-            webhookCount: sql<number>`count(${webhooks.id})`.as('webhook_count'),
+            webhookCount: sql<number>`count(${webhooks.id})`.as(
+              'webhook_count',
+            ),
           })
           .from(endpoints)
           .leftJoin(webhooks, sql`${webhooks.endpointId} = ${endpoints.id}`)
@@ -58,4 +60,3 @@ export const listEndpoints: FastifyPluginAsyncZod = async (app) => {
     },
   )
 }
-

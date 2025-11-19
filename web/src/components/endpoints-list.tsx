@@ -1,21 +1,21 @@
-import { Loader2 } from "lucide-react";
-import { endpointListSchema } from "../http/schemas/endpoints";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { CopyButton } from "./ui/copy-button";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { API_URL } from "../config";
+import { Loader2 } from 'lucide-react'
+import { endpointListSchema } from '../http/schemas/endpoints'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { CopyButton } from './ui/copy-button'
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { API_URL } from '../config'
 
 export function EndpointsList() {
   const { data } = useSuspenseQuery({
-    queryKey: ["endpoints"],
+    queryKey: ['endpoints'],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/endpoints`);
-      const data = await response.json();
-      return endpointListSchema.parse(data);
+      const response = await fetch(`${API_URL}/api/endpoints`)
+      const data = await response.json()
+      return endpointListSchema.parse(data)
     },
-  });
+  })
 
   if (data.endpoints.length === 0) {
     return (
@@ -24,7 +24,7 @@ export function EndpointsList() {
           <p className="text-sm text-zinc-400">Nenhum endpoint criado ainda.</p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -49,7 +49,7 @@ export function EndpointsList() {
                   <div className="flex items-center gap-2 text-xs text-zinc-500">
                     <span>
                       {endpoint.webhookCount || 0} webhook
-                      {endpoint.webhookCount !== 1 ? "s" : ""}
+                      {endpoint.webhookCount !== 1 ? 's' : ''}
                     </span>
                     <span>•</span>
                     <span>
@@ -62,9 +62,9 @@ export function EndpointsList() {
                 </div>
               </div>
             </Link>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }

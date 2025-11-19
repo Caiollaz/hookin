@@ -42,4 +42,3 @@ export const createEndpoint: FastifyPluginAsyncZod = async (app) => {
     },
   )
 }
-

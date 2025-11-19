@@ -25,10 +25,10 @@ export const listWebhooks: FastifyPluginAsyncZod = async (app) => {
                 method: true,
                 pathname: true,
                 createdAt: true,
-              })
+              }),
             ),
             nextCursor: z.string().nullable(),
-          })
+          }),
         },
       },
     },
@@ -45,7 +45,7 @@ export const listWebhooks: FastifyPluginAsyncZod = async (app) => {
           .limit(1)
 
         if (endpointResult.length === 0) {
-          return reply.status(404).send({ 
+          return reply.status(404).send({
             message: 'Endpoint not found.',
             webhooks: [],
             nextCursor: null,

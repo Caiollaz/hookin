@@ -35,9 +35,7 @@
         "endpoints_slug_unique": {
           "name": "endpoints_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -129,12 +127,8 @@
           "name": "webhooks_endpoint_id_endpoints_id_fk",
           "tableFrom": "webhooks",
           "tableTo": "endpoints",
-          "columnsFrom": [
-            "endpoint_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["endpoint_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

@@ -37,9 +37,8 @@ export const captureWebhook: FastifyPluginAsyncZod = async (app) => {
       }
 
       const slug = pathParts[0]
-      const subpath = pathParts.length > 1 
-        ? '/' + pathParts.slice(1).join('/')
-        : '/'
+      const subpath =
+        pathParts.length > 1 ? '/' + pathParts.slice(1).join('/') : '/'
 
       const endpointResult = await db
         .select()
@@ -63,21 +62,20 @@ export const captureWebhook: FastifyPluginAsyncZod = async (app) => {
       let body: string | null = null
 
       if (request.body) {
-        body = typeof request.body === 'string'
-          ? request.body
-          : JSON.stringify(request.body, null, 2)
+        body =
+          typeof request.body === 'string'
+            ? request.body
+            : JSON.stringify(request.body, null, 2)
       }
 
       const headers = Object.fromEntries(
         Object.entries(request.headers).map(([key, value]) => [
           key,
           Array.isArray(value) ? value.join(', ') : value || '',
-        ])
+        ]),
       )
 
-      const queryParams = Object.fromEntries(
-        url.searchParams.entries()
-      )
+      const queryParams = Object.fromEntries(url.searchParams.entries())
 
       const countResult = await db
         .select({ count: sql<number>`count(*)::int` })
@@ -89,7 +87,7 @@ export const captureWebhook: FastifyPluginAsyncZod = async (app) => {
       const result = await db.transaction(async (tx) => {
         if (currentCount >= MAX_WEBHOOKS_PER_ENDPOINT) {
           const toDelete = currentCount - MAX_WEBHOOKS_PER_ENDPOINT + 1
-          
+
           const oldestWebhooks = await tx
             .select({ id: webhooks.id })
             .from(webhooks)
@@ -98,10 +96,8 @@ export const captureWebhook: FastifyPluginAsyncZod = async (app) => {
             .limit(toDelete)
 
           if (oldestWebhooks.length > 0) {
-            const idsToDelete = oldestWebhooks.map(w => w.id)
-            await tx
-              .delete(webhooks)
-              .where(inArray(webhooks.id, idsToDelete))
+            const idsToDelete = oldestWebhooks.map((w) => w.id)
+            await tx.delete(webhooks).where(inArray(webhooks.id, idsToDelete))
           }
         }
 
@@ -116,7 +112,8 @@ export const captureWebhook: FastifyPluginAsyncZod = async (app) => {
             body,
             headers,
             pathname: subpath,
-            queryParams: Object.keys(queryParams).length > 0 ? queryParams : null,
+            queryParams:
+              Object.keys(queryParams).length > 0 ? queryParams : null,
           })
           .returning()
 

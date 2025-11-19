@@ -36,7 +36,8 @@ function Index() {
             Bem-vindo ao HookIn
           </h3>
           <p className="text-md text-zinc-400 max-w-md">
-            Crie seu primeiro endpoint de webhook para começar a receber e inspecionar requisições.
+            Crie seu primeiro endpoint de webhook para começar a receber e
+            inspecionar requisições.
           </p>
           <p className="text-sm text-zinc-500 max-w-md">
             Use o botão + na barra lateral para criar um novo endpoint.
@@ -49,9 +50,7 @@ function Index() {
   return (
     <div className="flex h-full items-center justify-center">
       <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
-        <p className="text-sm text-zinc-400">
-          Redirecionando...
-        </p>
+        <p className="text-sm text-zinc-400">Redirecionando...</p>
       </div>
     </div>
   )

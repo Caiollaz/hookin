@@ -11,18 +11,22 @@ interface EndpointDetailsProps {
 }
 
 export function EndpointDetails({ slug }: EndpointDetailsProps) {
-  const { data: endpointData, isLoading, error } = useQuery({
+  const {
+    data: endpointData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['endpoint', slug],
     queryFn: async () => {
       const response = await fetch(`${API_URL}/api/endpoints/${slug}`)
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           throw new Error('Endpoint não encontrado')
         }
         throw new Error('Erro ao carregar endpoint')
       }
-      
+
       const data = await response.json()
       return endpointDetailSchema.parse(data)
     },
@@ -69,9 +73,7 @@ export function EndpointDetails({ slug }: EndpointDetailsProps) {
             <h1 className="text-2xl font-semibold text-zinc-100">
               {endpointData.slug}
             </h1>
-            <p className="mt-1 text-sm text-zinc-400">
-              Endpoint de webhook
-            </p>
+            <p className="mt-1 text-sm text-zinc-400">Endpoint de webhook</p>
           </div>
           <CopyButton value={endpointData.url} />
         </div>
@@ -97,4 +99,3 @@ export function EndpointDetails({ slug }: EndpointDetailsProps) {
     </div>
   )
 }
-

@@ -70,12 +70,12 @@ function generateStripeWebhook(endpointId: string) {
         id: eventType.includes('charge')
           ? `ch_${faker.string.alphanumeric(24)}`
           : eventType.includes('payment_intent')
-          ? `pi_${faker.string.alphanumeric(24)}`
-          : eventType.includes('invoice')
-          ? `in_${faker.string.alphanumeric(24)}`
-          : eventType.includes('customer')
-          ? `cus_${faker.string.alphanumeric(14)}`
-          : `cs_${faker.string.alphanumeric(24)}`,
+            ? `pi_${faker.string.alphanumeric(24)}`
+            : eventType.includes('invoice')
+              ? `in_${faker.string.alphanumeric(24)}`
+              : eventType.includes('customer')
+                ? `cus_${faker.string.alphanumeric(14)}`
+                : `cs_${faker.string.alphanumeric(24)}`,
         object: eventType.split('.')[0],
         amount: amount,
         currency: currency,
@@ -102,7 +102,7 @@ function generateStripeWebhook(endpointId: string) {
       'content-type': 'application/json',
       'stripe-signature': `t=${Math.floor(Date.now() / 1000)},v1=${faker.string.alphanumeric(64)}`,
       'user-agent': 'Stripe/1.0 (+https://stripe.com/docs/webhooks)',
-      'accept': '*/*',
+      accept: '*/*',
       'accept-encoding': 'gzip, deflate',
     },
     body: bodyString,
@@ -112,7 +112,13 @@ function generateStripeWebhook(endpointId: string) {
 
 function generateGitHubWebhook(endpointId: string) {
   const eventType = faker.helpers.arrayElement(githubEvents)
-  const action = faker.helpers.arrayElement(['opened', 'closed', 'created', 'updated', 'deleted'])
+  const action = faker.helpers.arrayElement([
+    'opened',
+    'closed',
+    'created',
+    'updated',
+    'deleted',
+  ])
 
   const body = {
     action,
@@ -172,18 +178,34 @@ function generateShopifyWebhook(endpointId: string) {
     gateway: 'shopify_payments',
     test: faker.datatype.boolean(),
     total_price: faker.number.float({ min: 10, max: 1000, fractionDigits: 2 }),
-    subtotal_price: faker.number.float({ min: 10, max: 1000, fractionDigits: 2 }),
+    subtotal_price: faker.number.float({
+      min: 10,
+      max: 1000,
+      fractionDigits: 2,
+    }),
     total_weight: faker.number.int({ min: 0, max: 5000 }),
     total_tax: faker.number.float({ min: 0, max: 100, fractionDigits: 2 }),
     currency: faker.helpers.arrayElement(['USD', 'EUR', 'BRL']),
-    financial_status: faker.helpers.arrayElement(['paid', 'pending', 'refunded']),
-    fulfillment_status: faker.helpers.arrayElement(['fulfilled', 'partial', 'unfulfilled', null]),
-    line_items: Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => ({
-      id: faker.number.int({ min: 100000, max: 999999 }),
-      title: faker.commerce.productName(),
-      quantity: faker.number.int({ min: 1, max: 10 }),
-      price: faker.number.float({ min: 5, max: 500, fractionDigits: 2 }),
-    })),
+    financial_status: faker.helpers.arrayElement([
+      'paid',
+      'pending',
+      'refunded',
+    ]),
+    fulfillment_status: faker.helpers.arrayElement([
+      'fulfilled',
+      'partial',
+      'unfulfilled',
+      null,
+    ]),
+    line_items: Array.from(
+      { length: faker.number.int({ min: 1, max: 5 }) },
+      () => ({
+        id: faker.number.int({ min: 100000, max: 999999 }),
+        title: faker.commerce.productName(),
+        quantity: faker.number.int({ min: 1, max: 10 }),
+        price: faker.number.float({ min: 5, max: 500, fractionDigits: 2 }),
+      }),
+    ),
   }
 
   const bodyString = JSON.stringify(body, null, 2)
@@ -233,7 +255,13 @@ function generateGenericWebhook(endpointId: string) {
   return {
     endpointId,
     method,
-    pathname: faker.helpers.arrayElement(['/', '/api', '/webhook', '/callback', '/notify']),
+    pathname: faker.helpers.arrayElement([
+      '/',
+      '/api',
+      '/webhook',
+      '/callback',
+      '/notify',
+    ]),
     ip: faker.internet.ipv4(),
     statusCode: faker.helpers.arrayElement([200, 201, 400, 404, 500]),
     contentType: hasBody ? 'application/json' : null,
@@ -246,8 +274,12 @@ function generateGenericWebhook(endpointId: string) {
       : null,
     headers: {
       'user-agent': faker.internet.userAgent(),
-      'accept': '*/*',
-      'accept-language': faker.helpers.arrayElement(['en-US', 'pt-BR', 'es-ES']),
+      accept: '*/*',
+      'accept-language': faker.helpers.arrayElement([
+        'en-US',
+        'pt-BR',
+        'es-ES',
+      ]),
       ...(hasBody && { 'content-type': 'application/json' }),
     },
     body: bodyString,
@@ -266,10 +298,7 @@ async function seed() {
   const endpointsData = []
   for (let i = 0; i < 5; i++) {
     const slug = await generateUniqueSlug()
-    const endpoint = await db
-      .insert(endpoints)
-      .values({ slug })
-      .returning()
+    const endpoint = await db.insert(endpoints).values({ slug }).returning()
     endpointsData.push(endpoint[0])
   }
 
@@ -326,7 +355,9 @@ async function seed() {
 
   await db.insert(webhooks).values(webhooksData)
 
-  console.log(`✅ Created ${webhooksData.length} webhooks across ${endpointsData.length} endpoints`)
+  console.log(
+    `✅ Created ${webhooksData.length} webhooks across ${endpointsData.length} endpoints`,
+  )
   console.log('✅ Database seeded successfully!')
 }
 

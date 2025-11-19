@@ -23,7 +23,7 @@ export const endpointDetailSchema = z.object({
       method: z.string(),
       pathname: z.string(),
       createdAt: z.coerce.date(),
-    })
+    }),
   ),
   nextCursor: z.string().nullable(),
 })
@@ -33,4 +33,3 @@ export const createEndpointResponseSchema = z.object({
   slug: z.string(),
   url: z.string(),
 })
-

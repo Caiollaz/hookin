@@ -1,10 +1,14 @@
-import { integer, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
 import { endpoints } from './endpoints'
 
 export const webhooks = pgTable('webhooks', {
-  id: text().primaryKey().$defaultFn(() => uuidv7()),
-  endpointId: text('endpoint_id').references(() => endpoints.id, { onDelete: 'cascade' }),
+  id: text()
+    .primaryKey()
+    .$defaultFn(() => uuidv7()),
+  endpointId: text('endpoint_id').references(() => endpoints.id, {
+    onDelete: 'cascade',
+  }),
   method: text().notNull(),
   pathname: text().notNull(),
   ip: text().notNull(),

@@ -1,9 +1,7 @@
 import { Loader2 } from 'lucide-react'
 import { webhookListSchema } from '../http/schemas/webhooks'
 import { WebhooksListItem } from './webhooks-list-item'
-import {
-  useSuspenseInfiniteQuery,
-} from '@tanstack/react-query'
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { API_URL } from '../config'
 
@@ -74,9 +72,7 @@ export function WebhooksList({ endpointSlug }: WebhooksListProps = {}) {
   if (webhooks.length === 0) {
     return (
       <div className="flex items-center justify-center p-8">
-        <p className="text-sm text-zinc-400">
-          Nenhum webhook recebido ainda.
-        </p>
+        <p className="text-sm text-zinc-400">Nenhum webhook recebido ainda.</p>
       </div>
     )
   }

@@ -32,7 +32,7 @@ export const getEndpoint: FastifyPluginAsyncZod = async (app) => {
                 method: true,
                 pathname: true,
                 createdAt: true,
-              })
+              }),
             ),
             nextCursor: z.string().nullable(),
           }),
@@ -88,4 +88,3 @@ export const getEndpoint: FastifyPluginAsyncZod = async (app) => {
     },
   )
 }
-
