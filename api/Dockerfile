@@ -1,34 +1,38 @@
-# ---------- BUILDER ----------
+# Stage 1: Build
 FROM node:20-alpine AS builder
 
+RUN corepack enable && corepack prepare pnpm@10.15.0 --activate
+
 WORKDIR /app
 
-# Copiar apenas arquivos que congelam dependências
-COPY api/package.json api/package-lock.json ./
+# Copiar root config (workspace + lockfile)
+COPY pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY package.json ./
 
-# Instalar dependências completas
-RUN npm install
+# Copiar API package.json
+COPY api/package.json ./api/
 
-# Copiar todo o código da API
-COPY api/ ./
+RUN pnpm install --frozen-lockfile
 
-# Compilar TypeScript
-RUN npm run build
+# Copiar código
+COPY api ./api
+
+RUN pnpm --filter api run build
 
 
-# ---------- PRODUCTION ----------
+# Stage 2: Production
 FROM node:20-alpine AS production
 
+RUN corepack enable && corepack prepare pnpm@10.15.0 --activate
+
 WORKDIR /app
 
-ENV NODE_ENV=production
+# Copiar root config
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY api/package.json ./api/
 
-# Copiar apenas dependências para produção
-COPY api/package.json api/package-lock.json ./
-RUN npm install --only=production
+RUN pnpm install --frozen-lockfile --prod --filter api
 
-# Copiar build final
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/api/dist ./dist
 
-# Start
 CMD ["node", "dist/server.js"]
