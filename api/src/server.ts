@@ -16,6 +16,7 @@ import { captureWebhook } from './routes/capture-webhook'
 import { createEndpoint } from './routes/create-endpoint'
 import { listEndpoints } from './routes/list-endpoints'
 import { getEndpoint } from './routes/get-endpoint'
+import { health } from './routes/health'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -43,6 +44,7 @@ app.register(ScalarApiReference, {
   routePrefix: '/docs',
 })
 
+app.register(health)
 app.register(listWebhooks)
 app.register(getWebhook)
 app.register(deleteWebhook)
