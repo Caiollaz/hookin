@@ -48,9 +48,5 @@ RUN chmod +x /usr/local/bin/healthcheck.sh
 # Variáveis de ambiente padrão
 ENV NODE_ENV=production
 
-# Healthcheck para monitoramento (usa PORT do env via script)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD /usr/local/bin/healthcheck.sh
-
 # Comando para iniciar a aplicação
 CMD ["node", "dist/server.js"]
