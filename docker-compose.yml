@@ -5,7 +5,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: api/Dockerfile
+      dockerfile: ./api/Dockerfile
     container_name: hookin_api
     environment:
       NODE_ENV: production
@@ -22,7 +22,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: web/Dockerfile
+      dockerfile: ./web/Dockerfile
       args:
         VITE_API_URL: ${VITE_API_URL}
     container_name: hookin_web
