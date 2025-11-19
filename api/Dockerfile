@@ -41,10 +41,6 @@ COPY --from=builder /app/dist ./dist
 # Copiar migrations (necessárias em runtime)
 COPY api/src/db/migrations ./src/db/migrations
 
-# Copiar script de healthcheck
-COPY api/healthcheck.sh /usr/local/bin/healthcheck.sh
-RUN chmod +x /usr/local/bin/healthcheck.sh
-
 # Variáveis de ambiente padrão
 ENV NODE_ENV=production
 
