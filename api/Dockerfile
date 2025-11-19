@@ -5,19 +5,21 @@ RUN corepack enable && corepack prepare pnpm@10.15.0 --activate
 
 WORKDIR /app
 
-# Copiar root config (workspace + lockfile)
-COPY pnpm-workspace.yaml pnpm-lock.yaml ./
-COPY package.json ./
+# Copiar configs do monorepo
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 
-# Copiar API package.json
+# Copiar todos os package.json do workspace
 COPY api/package.json ./api/
+COPY web/package.json ./web/
 
+# Instalar todas as dependências (dev + runtime)
 RUN pnpm install --frozen-lockfile
 
 # Copiar código
 COPY api ./api
 
-RUN pnpm --filter api run build
+# Buildar a API
+RUN pnpm --filter api build
 
 
 # Stage 2: Production
@@ -29,10 +31,15 @@ WORKDIR /app
 
 # Copiar root config
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+
+# Copiar todos os package.json do workspace
 COPY api/package.json ./api/
+COPY web/package.json ./web/
 
-RUN pnpm install --frozen-lockfile --prod --filter api
+# Instalar apenas deps de produção do monorepo inteiro
+RUN pnpm install --prod --frozen-lockfile
 
-COPY --from=builder /app/api/dist ./dist
+# Copiar dist apenas da API
+COPY --from=builder /app/api/dist ./api/dist
 
-CMD ["node", "dist/server.js"]
+CMD ["node", "api/dist/server.js"]
