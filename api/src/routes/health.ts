@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 
 export const health: FastifyPluginAsyncZod = async (app) => {
@@ -8,13 +9,10 @@ export const health: FastifyPluginAsyncZod = async (app) => {
         summary: 'Health check endpoint',
         tags: ['Health'],
         response: {
-          200: {
-            type: 'object',
-            properties: {
-              status: { type: 'string' },
-              timestamp: { type: 'string' },
-            },
-          },
+          200: z.object({
+            status: z.string(),
+            timestamp: z.string(),
+          }),
         },
       },
     },
