@@ -11,6 +11,9 @@ COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 # Web package.json
 COPY web/package.json ./web/
 
+# Variável de ambiente usada pelo Vite no build
+ENV VITE_API_URL=https://api.hookin.site
+
 RUN pnpm install --frozen-lockfile
 
 COPY web ./web
