@@ -1,7 +1,8 @@
 import { faker } from '@faker-js/faker'
 import { db } from '.'
-import { webhooks, endpoints } from './schema'
+import { webhooks, endpoints, sessions } from './schema'
 import { generateUniqueSlug } from '../utils/slug-generator'
+import { addHours } from 'date-fns'
 
 // Eventos comuns do Stripe
 const stripeEvents = [
@@ -294,11 +295,27 @@ async function seed() {
   await db.delete(webhooks)
   await db.delete(endpoints)
 
+  // Criar sessão padrão
+  const sessionSlug = 'demo-session'
+  const [session] = await db
+    .insert(sessions)
+    .values({
+      slug: sessionSlug,
+      sharePin: 'demo123',
+      expiresAt: addHours(new Date(), 24),
+    })
+    .returning()
+
+  console.log(`✅ Created demo session: ${sessionSlug}`)
+
   // Criar 5 endpoints mock
   const endpointsData = []
   for (let i = 0; i < 5; i++) {
     const slug = await generateUniqueSlug()
-    const endpoint = await db.insert(endpoints).values({ slug }).returning()
+    const endpoint = await db
+      .insert(endpoints)
+      .values({ slug, sessionId: session.id })
+      .returning()
     endpointsData.push(endpoint[0])
   }
 
