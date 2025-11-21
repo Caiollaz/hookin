@@ -18,7 +18,9 @@ export function EndpointDetails({ slug }: EndpointDetailsProps) {
   } = useQuery({
     queryKey: ['endpoint', slug],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/endpoints/${slug}`)
+      const response = await fetch(`${API_URL}/api/endpoints/${slug}`, {
+        credentials: 'include',
+      })
 
       if (!response.ok) {
         if (response.status === 404) {

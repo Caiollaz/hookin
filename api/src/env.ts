@@ -7,6 +7,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3333),
   DATABASE_URL: z.url(),
   BASE_URL: z.string().default('http://localhost:3333'),
+  COOKIE_SECRET: z.string().optional(),
 })
 
 export const env = envSchema.parse(process.env)

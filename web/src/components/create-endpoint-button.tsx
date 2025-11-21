@@ -11,6 +11,7 @@ export function CreateEndpointButton() {
     mutationFn: async () => {
       const response = await fetch(`${API_URL}/api/endpoints`, {
         method: 'POST',
+        credentials: 'include',
       })
       const data = await response.json()
       return createEndpointResponseSchema.parse(data)

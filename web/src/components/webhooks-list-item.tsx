@@ -22,6 +22,7 @@ export function WebhooksListItem({ webhook }: WebhookListItemProps) {
     mutationFn: async (id: string) => {
       await fetch(`${API_URL}/api/webhooks/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
       })
     },
     onSuccess: () => {

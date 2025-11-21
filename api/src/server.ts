@@ -8,6 +8,7 @@ import {
 import { fastifySwagger } from '@fastify/swagger'
 import { fastifyCors } from '@fastify/cors'
 import ScalarApiReference from '@scalar/fastify-api-reference'
+import fastifyCookie from '@fastify/cookie'
 import { listWebhooks } from './routes/list-webhooks'
 import { env } from './env'
 import { getWebhook } from './routes/get-webhook'
@@ -17,6 +18,7 @@ import { createEndpoint } from './routes/create-endpoint'
 import { listEndpoints } from './routes/list-endpoints'
 import { getEndpoint } from './routes/get-endpoint'
 import { health } from './routes/health'
+import { initSession } from './routes/init-session'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -26,7 +28,12 @@ app.setSerializerCompiler(serializerCompiler)
 app.register(fastifyCors, {
   origin: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  // credentials: true,
+  credentials: true,
+})
+
+app.register(fastifyCookie, {
+  secret: env.COOKIE_SECRET || 'super-secret-cookie-secret-key-change-me',
+  hook: 'onRequest',
 })
 
 app.register(fastifySwagger, {
@@ -45,6 +52,7 @@ app.register(ScalarApiReference, {
 })
 
 app.register(health)
+app.register(initSession)
 app.register(listWebhooks)
 app.register(getWebhook)
 app.register(deleteWebhook)

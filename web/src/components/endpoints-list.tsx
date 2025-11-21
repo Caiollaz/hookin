@@ -10,7 +10,9 @@ export function EndpointsList() {
   const { data } = useSuspenseQuery({
     queryKey: ['endpoints'],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/endpoints`)
+      const response = await fetch(`${API_URL}/api/endpoints`, {
+        credentials: 'include',
+      })
       const data = await response.json()
       return endpointListSchema.parse(data)
     },

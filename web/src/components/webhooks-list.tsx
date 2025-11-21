@@ -27,7 +27,7 @@ export function WebhooksList({ endpointSlug }: WebhooksListProps = {}) {
           url.searchParams.set('endpoint', endpointSlug)
         }
 
-        const response = await fetch(url)
+        const response = await fetch(url, { credentials: 'include' })
         const data = await response.json()
 
         return webhookListSchema.parse(data)

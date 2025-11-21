@@ -14,7 +14,9 @@ export function WebhookDetails({ id }: WebhookDetailsProps) {
   const { data } = useSuspenseQuery({
     queryKey: ['webhook', id],
     queryFn: async () => {
-      const response = await fetch(`${API_URL}/api/webhooks/${id}`)
+      const response = await fetch(`${API_URL}/api/webhooks/${id}`, {
+        credentials: 'include',
+      })
       const data = await response.json()
 
       return webhookDetailsSchema.parse(data)

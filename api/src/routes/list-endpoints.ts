@@ -1,8 +1,8 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { endpoints, webhooks } from '@/db/schema'
+import { endpoints, webhooks, sessions } from '@/db/schema'
 import { db } from '@/db'
-import { desc, sql } from 'drizzle-orm'
+import { desc, sql, eq } from 'drizzle-orm'
 import { env } from '@/env'
 
 export const listEndpoints: FastifyPluginAsyncZod = async (app) => {
@@ -29,6 +29,25 @@ export const listEndpoints: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       try {
+        let sessionSlug = request.cookies.session_slug
+        if (!sessionSlug) {
+          return reply.send({ endpoints: [] })
+        }
+
+        const unsigned = request.unsignCookie(sessionSlug)
+        if (!unsigned.valid || !unsigned.value) {
+          return reply.send({ endpoints: [] })
+        }
+        sessionSlug = unsigned.value
+
+        const session = await db.query.sessions.findFirst({
+          where: eq(sessions.slug, sessionSlug),
+        })
+
+        if (!session) {
+          return reply.send({ endpoints: [] })
+        }
+
         const result = await db
           .select({
             id: endpoints.id,
@@ -40,6 +59,7 @@ export const listEndpoints: FastifyPluginAsyncZod = async (app) => {
           })
           .from(endpoints)
           .leftJoin(webhooks, sql`${webhooks.endpointId} = ${endpoints.id}`)
+          .where(eq(endpoints.sessionId, session.id))
           .groupBy(endpoints.id, endpoints.slug, endpoints.createdAt)
           .orderBy(desc(endpoints.createdAt))
 
