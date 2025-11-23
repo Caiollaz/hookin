@@ -1,10 +1,10 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { formatDistanceToNow } from 'date-fns'
-import { IconButton } from './ui/icon-button'
 import { Trash2Icon } from 'lucide-react'
-import { Checkbox } from './ui/checkbox'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { API_URL } from '../config'
+import { Checkbox } from './ui/checkbox'
+import { IconButton } from './ui/icon-button'
 
 interface WebhookListItemProps {
   webhook: {

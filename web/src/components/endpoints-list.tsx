@@ -1,10 +1,10 @@
-import { endpointListSchema } from '../http/schemas/endpoints'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { CopyButton } from './ui/copy-button'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { API_URL } from '../config'
+import { endpointListSchema } from '../http/schemas/endpoints'
+import { CopyButton } from './ui/copy-button'
 
 export function EndpointsList() {
   const { data } = useSuspenseQuery({

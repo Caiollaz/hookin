@@ -1,6 +1,6 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels'
+import { createRootRoute, Outlet } from '@tanstack/react-router'
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { Sidebar } from '../components/sidebar'
 
 const queryClient = new QueryClient()

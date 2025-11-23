@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { API_URL } from '../config'
 import { endpointDetailSchema } from '../http/schemas/endpoints'
+import { SectionDataTable } from './section-data-table'
+import { SectionTitle } from './section-title'
 import { CopyButton } from './ui/copy-button'
 import { WebhooksList } from './webhooks-list'
-import { SectionTitle } from './section-title'
-import { SectionDataTable } from './section-data-table'
-import { API_URL } from '../config'
 
 interface EndpointDetailsProps {
   slug: string

@@ -1,9 +1,9 @@
-import { Loader2 } from 'lucide-react'
-import { webhookListSchema } from '../http/schemas/webhooks'
-import { WebhooksListItem } from './webhooks-list-item'
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { API_URL } from '../config'
+import { webhookListSchema } from '../http/schemas/webhooks'
+import { WebhooksListItem } from './webhooks-list-item'
 
 interface WebhooksListProps {
   endpointSlug?: string

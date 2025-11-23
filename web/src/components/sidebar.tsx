@@ -1,6 +1,6 @@
-import { EndpointsList } from './endpoints-list'
 import { Suspense } from 'react'
 import { CreateEndpointButton } from './create-endpoint-button'
+import { EndpointsList } from './endpoints-list'
 
 export function Sidebar() {
   return (

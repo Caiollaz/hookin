@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { endpointListSchema } from '../http/schemas/endpoints'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { API_URL, type Session } from '../config'
+import { endpointListSchema } from '../http/schemas/endpoints'
 
 export const Route = createFileRoute('/')({
   component: Index,

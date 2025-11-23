@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
+import { API_URL } from '../config'
 import { createEndpointResponseSchema } from '../http/schemas/endpoints'
 import { IconButton } from './ui/icon-button'
-import { API_URL } from '../config'
 
 export function CreateEndpointButton() {
   const queryClient = useQueryClient()
