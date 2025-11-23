@@ -1,8 +1,8 @@
+import { db } from '@/db'
+import { endpoints, webhooks } from '@/db/schema'
+import { eq, inArray, sql } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { webhooks, endpoints } from '@/db/schema'
-import { db } from '@/db'
-import { eq, desc, sql, inArray } from 'drizzle-orm'
 
 const MAX_WEBHOOKS_PER_ENDPOINT = 100
 

@@ -40,12 +40,8 @@
           "name": "endpoints_session_id_sessions_id_fk",
           "tableFrom": "endpoints",
           "tableTo": "sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -55,9 +51,7 @@
         "endpoints_slug_unique": {
           "name": "endpoints_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -149,12 +143,8 @@
           "name": "webhooks_endpoint_id_endpoints_id_fk",
           "tableFrom": "webhooks",
           "tableTo": "endpoints",
-          "columnsFrom": [
-            "endpoint_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["endpoint_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

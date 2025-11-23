@@ -1,24 +1,24 @@
+import fastifyCookie from '@fastify/cookie'
+import { fastifyCors } from '@fastify/cors'
+import { fastifySwagger } from '@fastify/swagger'
+import ScalarApiReference from '@scalar/fastify-api-reference'
 import { fastify } from 'fastify'
 import {
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
-  jsonSchemaTransform,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import { fastifySwagger } from '@fastify/swagger'
-import { fastifyCors } from '@fastify/cors'
-import ScalarApiReference from '@scalar/fastify-api-reference'
-import fastifyCookie from '@fastify/cookie'
-import { listWebhooks } from './routes/list-webhooks'
 import { env } from './env'
-import { getWebhook } from './routes/get-webhook'
-import { deleteWebhook } from './routes/delete-webhook'
 import { captureWebhook } from './routes/capture-webhook'
 import { createEndpoint } from './routes/create-endpoint'
-import { listEndpoints } from './routes/list-endpoints'
+import { deleteWebhook } from './routes/delete-webhook'
 import { getEndpoint } from './routes/get-endpoint'
+import { getWebhook } from './routes/get-webhook'
 import { health } from './routes/health'
 import { initSession } from './routes/init-session'
+import { listEndpoints } from './routes/list-endpoints'
+import { listWebhooks } from './routes/list-webhooks'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 

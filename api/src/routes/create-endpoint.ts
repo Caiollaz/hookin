@@ -1,10 +1,10 @@
-import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
-import { z } from 'zod'
-import { endpoints, sessions } from '@/db/schema'
 import { db } from '@/db'
+import { endpoints, sessions } from '@/db/schema'
+import { env } from '@/env'
 import { generateUniqueSlug } from '@/utils/slug-generator'
 import { eq } from 'drizzle-orm'
-import { env } from '@/env'
+import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
+import { z } from 'zod'
 
 export const createEndpoint: FastifyPluginAsyncZod = async (app) => {
   app.post(

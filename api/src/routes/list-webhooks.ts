@@ -1,6 +1,7 @@
 import { db } from '@/db'
-import { webhooks, endpoints } from '@/db/schema'
-import { desc, lt, eq, and } from 'drizzle-orm'
+import { endpoints, sessions, webhooks } from '@/db/schema'
+import { getSessionSlug } from '@/utils/session'
+import { and, desc, eq, lt } from 'drizzle-orm'
 import { createSelectSchema } from 'drizzle-zod'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -31,14 +32,16 @@ export const listWebhooks: FastifyPluginAsyncZod = async (app) => {
           }),
           404: z.object({
             message: z.string(),
-            webhooks: z.array(
-              createSelectSchema(webhooks).pick({
-                id: true,
-                method: true,
-                pathname: true,
-                createdAt: true,
-              })
-            ).default([]),
+            webhooks: z
+              .array(
+                createSelectSchema(webhooks).pick({
+                  id: true,
+                  method: true,
+                  pathname: true,
+                  createdAt: true,
+                }),
+              )
+              .default([]),
             nextCursor: z.string().nullable().default(null),
           }),
         },
@@ -47,13 +50,44 @@ export const listWebhooks: FastifyPluginAsyncZod = async (app) => {
     async (request, reply) => {
       const { limit, cursor, endpoint: endpointSlug } = request.query
 
+      const sessionSlug = getSessionSlug(request)
+
+      if (!sessionSlug) {
+        return reply.status(404).send({
+          message: 'Endpoint not found.',
+          webhooks: [],
+          nextCursor: null,
+        })
+      }
+
+      const sessionResult = await db
+        .select({ id: sessions.id })
+        .from(sessions)
+        .where(eq(sessions.slug, sessionSlug))
+        .limit(1)
+
+      if (sessionResult.length === 0) {
+        return reply.status(404).send({
+          message: 'Endpoint not found.',
+          webhooks: [],
+          nextCursor: null,
+        })
+      }
+
+      const sessionId = sessionResult[0].id
+
       let endpointId: string | undefined
 
       if (endpointSlug) {
         const endpointResult = await db
           .select({ id: endpoints.id })
           .from(endpoints)
-          .where(eq(endpoints.slug, endpointSlug))
+          .where(
+            and(
+              eq(endpoints.slug, endpointSlug),
+              eq(endpoints.sessionId, sessionId),
+            ),
+          )
           .limit(1)
 
         if (endpointResult.length === 0) {
@@ -68,14 +102,8 @@ export const listWebhooks: FastifyPluginAsyncZod = async (app) => {
       }
 
       const conditions = []
-      if (endpointId) {
-        conditions.push(eq(webhooks.endpointId, endpointId))
-      }
-      if (cursor) {
-        conditions.push(lt(webhooks.id, cursor))
-      }
 
-      const result = await db
+      let query = db
         .select({
           id: webhooks.id,
           method: webhooks.method,
@@ -83,6 +111,21 @@ export const listWebhooks: FastifyPluginAsyncZod = async (app) => {
           createdAt: webhooks.createdAt,
         })
         .from(webhooks)
+
+      if (endpointId) {
+        conditions.push(eq(webhooks.endpointId, endpointId))
+      } else {
+        // If no specific endpoint is requested, filter by session
+        // We need to join with endpoints to check session ownership
+        query.innerJoin(endpoints, eq(webhooks.endpointId, endpoints.id))
+        conditions.push(eq(endpoints.sessionId, sessionId))
+      }
+
+      if (cursor) {
+        conditions.push(lt(webhooks.id, cursor))
+      }
+
+      const result = await query
         .where(conditions.length > 0 ? and(...conditions) : undefined)
         .orderBy(desc(webhooks.id))
         .limit(limit + 1)

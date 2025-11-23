@@ -1,9 +1,9 @@
+import { db } from '@/db'
+import { endpoints, sessions, webhooks } from '@/db/schema'
+import { env } from '@/env'
+import { desc, eq, sql } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { endpoints, webhooks, sessions } from '@/db/schema'
-import { db } from '@/db'
-import { desc, sql, eq } from 'drizzle-orm'
-import { env } from '@/env'
 
 export const listEndpoints: FastifyPluginAsyncZod = async (app) => {
   app.get(

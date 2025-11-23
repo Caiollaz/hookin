@@ -1,10 +1,11 @@
+import { db } from '@/db'
+import { endpoints, sessions, webhooks } from '@/db/schema'
+import { env } from '@/env'
+import { getSessionSlug } from '@/utils/session'
+import { and, desc, eq, lt } from 'drizzle-orm'
+import { createSelectSchema } from 'drizzle-zod'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { endpoints, webhooks } from '@/db/schema'
-import { db } from '@/db'
-import { eq, desc, lt, and } from 'drizzle-orm'
-import { createSelectSchema } from 'drizzle-zod'
-import { env } from '@/env'
 
 export const getEndpoint: FastifyPluginAsyncZod = async (app) => {
   app.get(
@@ -44,10 +45,30 @@ export const getEndpoint: FastifyPluginAsyncZod = async (app) => {
       const { slug } = request.params
       const { limit, cursor } = request.query
 
+      const sessionSlug = getSessionSlug(request)
+
+      if (!sessionSlug) {
+        return reply.status(404).send({ message: 'Endpoint not found.' })
+      }
+
+      const sessionResult = await db
+        .select({ id: sessions.id })
+        .from(sessions)
+        .where(eq(sessions.slug, sessionSlug))
+        .limit(1)
+
+      if (sessionResult.length === 0) {
+        return reply.status(404).send({ message: 'Endpoint not found.' })
+      }
+
+      const sessionId = sessionResult[0].id
+
       const endpointResult = await db
         .select()
         .from(endpoints)
-        .where(eq(endpoints.slug, slug))
+        .where(
+          and(eq(endpoints.slug, slug), eq(endpoints.sessionId, sessionId)),
+        )
         .limit(1)
 
       if (endpointResult.length === 0) {

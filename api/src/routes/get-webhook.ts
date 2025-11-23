@@ -1,9 +1,9 @@
-import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
-import { createSelectSchema } from 'drizzle-zod'
-import { z } from 'zod'
-import { webhooks } from '@/db/schema'
 import { db } from '@/db'
+import { webhooks } from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { createSelectSchema } from 'drizzle-zod'
+import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
+import { z } from 'zod'
 
 export const getWebhook: FastifyPluginAsyncZod = async (app) => {
   app.get(

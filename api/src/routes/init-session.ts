@@ -4,9 +4,8 @@ import { env } from '@/env'
 import { addHours, isPast } from 'date-fns'
 import { eq } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
-import { uuidv7 } from 'uuidv7'
-import { z } from 'zod'
 import { generateSlug } from 'random-word-slugs'
+import { z } from 'zod'
 
 export const initSession: FastifyPluginAsyncZod = async (app) => {
   app.get(
