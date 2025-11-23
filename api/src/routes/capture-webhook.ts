@@ -3,6 +3,8 @@ import { endpoints, webhooks } from '@/db/schema'
 import { eq, inArray, sql } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
+import { wsManager } from '@/utils/websocket-manager'
+import { sessions } from '@/db/schema'
 
 const MAX_WEBHOOKS_PER_ENDPOINT = 100
 
@@ -119,6 +121,20 @@ export const captureWebhook: FastifyPluginAsyncZod = async (app) => {
 
         return insertResult[0]
       })
+
+      // Broadcast to session owner
+      const sessionResult = await db
+        .select({ slug: sessions.slug })
+        .from(sessions)
+        .where(eq(sessions.id, endpoint.sessionId))
+        .limit(1)
+
+      if (sessionResult.length > 0) {
+        wsManager.broadcast(sessionResult[0].slug, {
+          type: 'new_webhook',
+          webhook: result,
+        })
+      }
 
       return reply.status(201).send({ id: result.id })
     },

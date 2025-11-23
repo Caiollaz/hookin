@@ -3,6 +3,7 @@ import { fastifyCors } from '@fastify/cors'
 import { fastifySwagger } from '@fastify/swagger'
 import ScalarApiReference from '@scalar/fastify-api-reference'
 import { fastify } from 'fastify'
+import fastifyWebsocket from '@fastify/websocket'
 import {
   jsonSchemaTransform,
   serializerCompiler,
@@ -17,6 +18,7 @@ import { getEndpoint } from './routes/get-endpoint'
 import { getWebhook } from './routes/get-webhook'
 import { health } from './routes/health'
 import { initSession } from './routes/init-session'
+import { wsRoute } from './routes/ws'
 import { listEndpoints } from './routes/list-endpoints'
 import { listWebhooks } from './routes/list-webhooks'
 
@@ -36,6 +38,8 @@ app.register(fastifyCookie, {
   hook: 'onRequest',
 })
 
+app.register(fastifyWebsocket)
+
 app.register(fastifySwagger, {
   openapi: {
     info: {
@@ -52,6 +56,7 @@ app.register(ScalarApiReference, {
 })
 
 app.register(health)
+app.register(wsRoute)
 app.register(initSession)
 app.register(listWebhooks)
 app.register(getWebhook)

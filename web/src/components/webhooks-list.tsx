@@ -1,7 +1,8 @@
-import { useSuspenseInfiniteQuery } from '@tanstack/react-query'
+import { useQueryClient, useSuspenseInfiniteQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { API_URL } from '../config'
+import { useWebSocket } from '../hooks/use-websocket'
 import { webhookListSchema } from '../http/schemas/webhooks'
 import { WebhooksListItem } from './webhooks-list-item'
 
@@ -12,6 +13,21 @@ interface WebhooksListProps {
 export function WebhooksList({ endpointSlug }: WebhooksListProps = {}) {
   const loadMoreRef = useRef<HTMLDivElement>(null)
   const observerRef = useRef<IntersectionObserver>(null)
+  const queryClient = useQueryClient()
+
+  useWebSocket((message) => {
+    if (message.type === 'new_webhook') {
+      const newWebhook = message.webhook
+
+      if (endpointSlug && newWebhook.endpointId) {
+        // Invalidate query to fetch new data
+        queryClient.invalidateQueries({ queryKey: ['webhooks'] })
+        return
+      }
+      
+      queryClient.invalidateQueries({ queryKey: ['webhooks'] })
+    }
+  })
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useSuspenseInfiniteQuery({
