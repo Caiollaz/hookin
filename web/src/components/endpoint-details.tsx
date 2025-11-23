@@ -69,7 +69,7 @@ export function EndpointDetails({ slug }: EndpointDetailsProps) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="space-y-4 border-b border-zinc-700 p-6">
+      <div className="space-y-4 border-b border-zinc-700 p-4 md:p-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-zinc-100">
@@ -86,7 +86,7 @@ export function EndpointDetails({ slug }: EndpointDetailsProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="space-y-6 p-6">
+        <div className="space-y-6 p-4 md:p-6">
           <div className="space-y-4">
             <SectionTitle>Informações do Endpoint</SectionTitle>
             <SectionDataTable data={overviewData} />

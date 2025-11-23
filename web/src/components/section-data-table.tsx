@@ -28,7 +28,7 @@ export function SectionDataTable({
               <td className="p-3 text-sm font-medium text-zinc-400 bg-zinc-800/50 border-r border-zinc-700">
                 {item.key}
               </td>
-              <td className="p-3 text-sm font-mono text-zinc-300">
+              <td className="p-3 text-sm font-mono text-zinc-300 break-all">
                 {item.value}
               </td>
             </tr>
