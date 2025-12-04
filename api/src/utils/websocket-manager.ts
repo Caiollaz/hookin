@@ -10,7 +10,7 @@ class WebSocketManager {
       console.error('Attempted to add undefined connection for', sessionSlug)
       return
     }
-    
+
     if (!this.connections.has(sessionSlug)) {
       this.connections.set(sessionSlug, new Set())
     }
@@ -41,10 +41,11 @@ class WebSocketManager {
       const payload = JSON.stringify(message)
       for (const ws of connections) {
         if (!ws) {
-            console.error('Found undefined connection in set for', sessionSlug)
-            continue
+          console.error('Found undefined connection in set for', sessionSlug)
+          continue
         }
-        if (ws.readyState === 1) { // WebSocket.OPEN is 1
+        if (ws.readyState === 1) {
+          // WebSocket.OPEN is 1
           ws.send(payload)
         }
       }

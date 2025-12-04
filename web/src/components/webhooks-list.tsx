@@ -24,7 +24,7 @@ export function WebhooksList({ endpointSlug }: WebhooksListProps = {}) {
         queryClient.invalidateQueries({ queryKey: ['webhooks'] })
         return
       }
-      
+
       queryClient.invalidateQueries({ queryKey: ['webhooks'] })
     }
   })

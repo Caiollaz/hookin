@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 import { createSelectSchema } from 'drizzle-zod'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
+import { decrypt } from '@/utils/encryption'
 
 export const getWebhook: FastifyPluginAsyncZod = async (app) => {
   app.get(
@@ -16,7 +17,10 @@ export const getWebhook: FastifyPluginAsyncZod = async (app) => {
           id: z.uuidv7(),
         }),
         response: {
-          200: createSelectSchema(webhooks),
+          200: createSelectSchema(webhooks).extend({
+            queryParams: z.record(z.string(), z.string()).nullable(),
+            headers: z.record(z.string(), z.string()),
+          }),
           404: z.object({ message: z.string() }),
         },
       },
@@ -34,7 +38,16 @@ export const getWebhook: FastifyPluginAsyncZod = async (app) => {
         return reply.status(404).send({ message: 'Webhook not found.' })
       }
 
-      return reply.send(result[0])
+      const webhook = result[0]
+
+      return reply.send({
+        ...webhook,
+        body: webhook.body ? decrypt(webhook.body) : null,
+        headers: JSON.parse(decrypt(webhook.headers)),
+        queryParams: webhook.queryParams
+          ? JSON.parse(decrypt(webhook.queryParams))
+          : null,
+      })
     },
   )
 }

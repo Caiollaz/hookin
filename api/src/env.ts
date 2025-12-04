@@ -8,6 +8,7 @@ const envSchema = z.object({
   DATABASE_URL: z.url(),
   BASE_URL: z.string().default('http://localhost:3333'),
   COOKIE_SECRET: z.string().optional(),
+  ENCRYPTION_KEY: z.string(),
 })
 
 export const env = envSchema.parse(process.env)

@@ -34,7 +34,7 @@ app.register(fastifyCors, {
 })
 
 app.register(fastifyCookie, {
-  secret: env.COOKIE_SECRET || 'super-secret-cookie-secret-key-change-me',
+  secret: env.COOKIE_SECRET,
   hook: 'onRequest',
 })
 

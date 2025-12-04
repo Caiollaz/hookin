@@ -5,6 +5,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { wsManager } from '@/utils/websocket-manager'
 import { sessions } from '@/db/schema'
+import { encrypt } from '@/utils/encryption'
 
 const MAX_WEBHOOKS_PER_ENDPOINT = 100
 
@@ -111,11 +112,13 @@ export const captureWebhook: FastifyPluginAsyncZod = async (app) => {
             ip,
             contentType,
             contentLength,
-            body,
-            headers,
+            body: body ? encrypt(body) : null,
+            headers: encrypt(JSON.stringify(headers)),
             pathname: subpath,
             queryParams:
-              Object.keys(queryParams).length > 0 ? queryParams : null,
+              Object.keys(queryParams).length > 0
+                ? encrypt(JSON.stringify(queryParams))
+                : null,
           })
           .returning()
 
