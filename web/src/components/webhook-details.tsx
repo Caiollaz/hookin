@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { API_URL } from '../config'
 import { webhookDetailsSchema } from '../http/schemas/webhooks'
 import { SectionDataTable } from './section-data-table'
@@ -11,30 +11,66 @@ interface WebhookDetailsProps {
 }
 
 export function WebhookDetails({ id }: WebhookDetailsProps) {
-  const { data } = useSuspenseQuery({
+  const {
+    data: webhookData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['webhook', id],
     queryFn: async () => {
       const response = await fetch(`${API_URL}/api/webhooks/${id}`, {
         credentials: 'include',
       })
+
+      if (!response.ok) {
+        throw new Error('Webhook não encontrado')
+      }
+
       const data = await response.json()
 
       return webhookDetailsSchema.parse(data)
     },
+    retry: false,
   })
 
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-sm text-zinc-400">Carregando...</p>
+      </div>
+    )
+  }
+
+  if (error || !webhookData) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg font-semibold text-zinc-200">
+            Webhook não encontrado
+          </p>
+          <p className="mt-2 text-sm text-zinc-400">
+            O webhook com id "{id}" não existe.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   const overviewData = [
-    { key: 'Method', value: data.method },
-    { key: 'Status Code', value: String(data.statusCode) },
-    { key: 'Content-Type', value: data.contentType || 'application/json' },
-    { key: 'Content-Length', value: `${data.contentLength || 0} bytes` },
+    { key: 'Method', value: webhookData.method },
+    { key: 'Status Code', value: String(webhookData.statusCode) },
+    {
+      key: 'Content-Type',
+      value: webhookData.contentType || 'application/json',
+    },
+    { key: 'Content-Length', value: `${webhookData.contentLength || 0} bytes` },
   ]
 
-  const headers = Object.entries(data.headers).map(([key, value]) => {
+  const headers = Object.entries(webhookData.headers).map(([key, value]) => {
     return { key, value: String(value) }
   })
 
-  const queryParams = Object.entries(data.queryParams || {}).map(
+  const queryParams = Object.entries(webhookData.queryParams || {}).map(
     ([key, value]) => {
       return { key, value: String(value) }
     },
@@ -43,10 +79,10 @@ export function WebhookDetails({ id }: WebhookDetailsProps) {
   return (
     <div className="flex h-full flex-col">
       <WebhookDetailHeader
-        method={data.method}
-        pathname={data.pathname}
-        ip={data.ip}
-        createdAt={data.createdAt}
+        method={webhookData.method}
+        pathname={webhookData.pathname}
+        ip={webhookData.ip}
+        createdAt={webhookData.createdAt}
       />
       <div className="flex-1 overflow-y-auto">
         <div className="space-y-6 p-6">
@@ -67,10 +103,10 @@ export function WebhookDetails({ id }: WebhookDetailsProps) {
             </div>
           )}
 
-          {!!data.body && (
+          {!!webhookData.body && (
             <div className="space-y-4">
               <SectionTitle>Request Body</SectionTitle>
-              <CodeBlock code={data.body} />
+              <CodeBlock code={webhookData.body} />
             </div>
           )}
         </div>

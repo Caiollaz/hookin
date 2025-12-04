@@ -1,8 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { EndpointDetails } from '../components/endpoint-details'
 
 export const Route = createFileRoute('/endpoints/$slug')({
   component: RouteComponent,
+  errorComponent: () => <Navigate to="/" />,
 })
 
 function RouteComponent() {

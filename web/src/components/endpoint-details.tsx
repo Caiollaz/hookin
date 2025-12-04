@@ -32,6 +32,7 @@ export function EndpointDetails({ slug }: EndpointDetailsProps) {
       const data = await response.json()
       return endpointDetailSchema.parse(data)
     },
+    retry: false,
   })
 
   if (isLoading) {
