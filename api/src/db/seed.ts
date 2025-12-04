@@ -99,13 +99,13 @@ function generateStripeWebhook(endpointId: string) {
     contentType: 'application/json',
     contentLength: Buffer.byteLength(bodyString),
     queryParams: null,
-    headers: {
+    headers: JSON.stringify({
       'content-type': 'application/json',
       'stripe-signature': `t=${Math.floor(Date.now() / 1000)},v1=${faker.string.alphanumeric(64)}`,
       'user-agent': 'Stripe/1.0 (+https://stripe.com/docs/webhooks)',
       accept: '*/*',
       'accept-encoding': 'gzip, deflate',
-    },
+    }),
     body: bodyString,
     createdAt: faker.date.recent({ days: 30 }),
   }
@@ -152,13 +152,13 @@ function generateGitHubWebhook(endpointId: string) {
     contentType: 'application/json',
     contentLength: Buffer.byteLength(bodyString),
     queryParams: null,
-    headers: {
+    headers: JSON.stringify({
       'content-type': 'application/json',
       'x-github-event': eventType,
       'x-github-delivery': faker.string.uuid(),
       'x-hub-signature-256': `sha256=${faker.string.alphanumeric(64)}`,
       'user-agent': 'GitHub-Hookshot/1.0',
-    },
+    }),
     body: bodyString,
     createdAt: faker.date.recent({ days: 30 }),
   }
@@ -220,13 +220,13 @@ function generateShopifyWebhook(endpointId: string) {
     contentType: 'application/json',
     contentLength: Buffer.byteLength(bodyString),
     queryParams: null,
-    headers: {
+    headers: JSON.stringify({
       'content-type': 'application/json',
       'x-shopify-shop-domain': shopDomain,
       'x-shopify-hmac-sha256': faker.string.alphanumeric(64),
       'x-shopify-topic': eventType,
       'x-shopify-webhook-id': faker.string.uuid(),
-    },
+    }),
     body: bodyString,
     createdAt: faker.date.recent({ days: 30 }),
   }
@@ -268,12 +268,12 @@ function generateGenericWebhook(endpointId: string) {
     contentType: hasBody ? 'application/json' : null,
     contentLength: bodyString ? Buffer.byteLength(bodyString) : null,
     queryParams: faker.datatype.boolean()
-      ? {
+      ? JSON.stringify({
           id: faker.string.uuid(),
           token: faker.string.alphanumeric(32),
-        }
+        })
       : null,
-    headers: {
+    headers: JSON.stringify({
       'user-agent': faker.internet.userAgent(),
       accept: '*/*',
       'accept-language': faker.helpers.arrayElement([
@@ -282,7 +282,7 @@ function generateGenericWebhook(endpointId: string) {
         'es-ES',
       ]),
       ...(hasBody && { 'content-type': 'application/json' }),
-    },
+    }),
     body: bodyString,
     createdAt: faker.date.recent({ days: 30 }),
   }

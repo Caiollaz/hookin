@@ -44,7 +44,7 @@ export function WebhookDetails({ id }: WebhookDetailsProps) {
   if (error || !webhookData) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="text-center">
+        <div className="p-4 text-center">
           <p className="text-lg font-semibold text-zinc-200">
             Webhook não encontrado
           </p>

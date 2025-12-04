@@ -46,7 +46,7 @@ export function EndpointDetails({ slug }: EndpointDetailsProps) {
   if (error || !endpointData) {
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="text-center">
+        <div className="p-4 text-center">
           <p className="text-lg font-semibold text-zinc-200">
             Endpoint não encontrado
           </p>
